@@ -21,6 +21,7 @@ security:
             provider: app_user_provider
             logout:
                 path: app_logout
+            custom_authenticator: App\Security\LoginAuthenticator
             # custom_authenticator: App\Security\LoginAuthenticator
                 # where to redirect after logout
                 # target: app_any_route
@@ -36,6 +37,7 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+
 
 when@test:
     security:

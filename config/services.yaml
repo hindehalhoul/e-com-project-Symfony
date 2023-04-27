@@ -4,8 +4,19 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    framework.csrf.token_storage.secret: '%env(APP_SECRET)%'
+    framework.csrf.token_storage.csrf_token_manager.default_time_limit: 43200
 
 services:
+    # ...
+
+    # Inject an instance of UserPasswordEncoderInterface
+    Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface: '@security.password_encoder'
+
+    App\Security\LoginAuthenticator:
+        arguments:
+            $passwordEncoder: '@Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface'
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
