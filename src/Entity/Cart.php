@@ -13,12 +13,11 @@ class Cart
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user_id = null;
+    #[ORM\Column(length: 255)]
+    private ?string $user_id = null;
 
-    #[ORM\ManyToOne]
-    private ?Product $product_id = null;
+    #[ORM\Column(length: 255)]
+    private ?string $product_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $quantity = null;
@@ -31,24 +30,24 @@ class Cart
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUserId(): ?string
     {
         return $this->user_id;
     }
 
-    public function setUserId(User $user_id): self
+    public function setUserId(string $user_id): self
     {
         $this->user_id = $user_id;
 
         return $this;
     }
 
-    public function getProductId(): ?Product
+    public function getProductId(): ?string
     {
         return $this->product_id;
     }
 
-    public function setProductId(?Product $product_id): self
+    public function setProductId(string $product_id): self
     {
         $this->product_id = $product_id;
 
