@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\CartRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
@@ -19,19 +17,14 @@ class Cart
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user_id = null;
 
-    #[ORM\ManyToMany(targetEntity: Product::class)]
-    private Collection $Product_id;
+    #[ORM\ManyToOne]
+    private ?Product $product_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $quantity = null;
 
     #[ORM\Column(length: 255)]
     private ?string $price = null;
-
-    public function __construct()
-    {
-        $this->Product_id = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -50,26 +43,14 @@ class Cart
         return $this;
     }
 
-    /**
-     * @return Collection<int, Product>
-     */
-    public function getProductId(): Collection
+    public function getProductId(): ?Product
     {
-        return $this->Product_id;
+        return $this->product_id;
     }
 
-    public function addProductId(Product $productId): self
+    public function setProductId(?Product $product_id): self
     {
-        if (!$this->Product_id->contains($productId)) {
-            $this->Product_id->add($productId);
-        }
-
-        return $this;
-    }
-
-    public function removeProductId(Product $productId): self
-    {
-        $this->Product_id->removeElement($productId);
+        $this->product_id = $product_id;
 
         return $this;
     }
