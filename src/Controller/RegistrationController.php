@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+// use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Cookie;
 
 
 class RegistrationController extends AbstractController
@@ -35,9 +37,7 @@ class RegistrationController extends AbstractController
         // Persist the user entity to the database
         $entityManager->persist($user);
         $entityManager->flush();
-
-        // Return a success JSON response
-        return $this->json([
+        $response = $this->json([
             'status' => 'success',
             'message' => 'User registered successfully',
             'user' => [
@@ -47,7 +47,10 @@ class RegistrationController extends AbstractController
                 'last_name' => $user->getLastName(),
             ],
         ]);
-    }
 
-   
+        $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
+
+        // Return a success JSON response
+        return $response;
+    }
 }

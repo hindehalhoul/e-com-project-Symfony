@@ -16,6 +16,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Cookie;
+
+
+
 
 class SecurityController extends AbstractController
 {
@@ -28,7 +33,7 @@ class SecurityController extends AbstractController
 
 
     #[Route(path: '/login', name: 'app_login')]
-    public function login(Request $request, AuthenticationUtils $authenticationUtils, UserRepository $userRepository)
+    public function login(Request $request, SessionInterface $session, UserRepository $userRepository): JsonResponse
     {
 
         $data = json_decode($request->getContent(), true);
@@ -46,18 +51,31 @@ class SecurityController extends AbstractController
                 'data' => []
             ]);
         }
-        return new JsonResponse([
+        $session->set('user_id', $user->getId());
+        $response = new JsonResponse([
             'status' => 'success',
             'message' => 'Authentication successful!',
             'data' => [
                 'id' => $user->getId(),
-                'email' => $user->getEmail()
+                'email' => $user->getEmail(),
+                'session_id' => $session->get('user_id')
             ]
         ]);
+        $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
+
+        return $response;
     }
     #[Route(path: '/logout', name: 'app_logout')]
-    public function logout(): void
+    public function logout(): JsonResponse
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        $response = new JsonResponse([
+            'status' => 'success',
+            'message' => 'Logout successful!',
+        ]);
+        $response->headers->clearCookie('user_id');
+        $response->headers->setCookie(
+            Cookie::create('user_id', null, time() - 3600)
+        );
+        return $response;
     }
 }

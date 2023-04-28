@@ -61,9 +61,6 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     {
         return $this->passwordHasher->isPasswordValid($user, $credentials['password']);
     }
-
-
-
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): JsonResponse
     {
         return new JsonResponse([
