@@ -65,17 +65,21 @@ class SecurityController extends AbstractController
 
         return $response;
     }
-    #[Route(path: '/logout', name: 'app_logout')]
-    public function logout(): JsonResponse
-    {
-        $response = new JsonResponse([
-            'status' => 'success',
-            'message' => 'Logout successful!',
-        ]);
-        $response->headers->clearCookie('user_id');
-        $response->headers->setCookie(
-            Cookie::create('user_id', null, time() - 3600)
-        );
-        return $response;
-    }
+
+
+    // logout doesnt work with postman, it needs the browser
+
+
+    // #[Route(path: '/logout', name: 'app_logout', methods: ['GET'])]
+    // public function logout(): JsonResponse
+    // {
+    //     $request = Request::createFromGlobals();
+    //     $response = new JsonResponse();
+    //     $response->headers->clearCookie('user_id');
+    //     $response->headers->setCookie(
+    //         Cookie::create('user_id', null, time() - 3600)
+    //     );
+    //     $response->send();
+    //     return $response;
+    // }
 }

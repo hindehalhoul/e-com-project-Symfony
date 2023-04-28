@@ -31,61 +31,74 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
-    public function showProdDetails(ProductRepository $productRepository, int $id): JsonResponse
-    {
-        $product = $productRepository->find($id);
-        $data = [];
+    // #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
+    // public function showProdDetails(ProductRepository $productRepository, int $id): JsonResponse
+    // {
+    //     $product = $productRepository->find($id);
+    //     $data = [];
 
-        if (!$product) {
-            return new JsonResponse([
-                'status' => '404',
-                'message' => 'Product not found',
-            ]);
-        }
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Product fetched successfully',
-            'product' => [
-                'id' => $product->getId(),
-                'name' => $product->getNom(),
-                'price (Dhs)' => $product->getPrix(),
-                'description' => $product->getDescription(),
-                'image' => $product->getImage(),
-                'add_to_cart_url' => $this->generateUrl('add_to_cart', ['id' => $product->getId()]),
-            ]
-        ]);
-    }
+    //     if (!$product) {
+    //         return new JsonResponse([
+    //             'status' => '404',
+    //             'message' => 'Product not found',
+    //         ]);
+    //     }
+    //     return new JsonResponse([
+    //         'status' => 'success',
+    //         'message' => 'Product fetched successfully',
+    //         'product' => [
+    //             'id' => $product->getId(),
+    //             'name' => $product->getNom(),
+    //             'price (Dhs)' => $product->getPrix(),
+    //             'description' => $product->getDescription(),
+    //             'image' => $product->getImage(),
+    //             'add_to_cart_url' => $this->generateUrl('add_to_cart', ['id' => $product->getId()]),
+    //         ]
+    //     ]);
+    // }
+
+
     #[Route('/{id}/add-to-cart', name: 'add_to_cart', methods: ['POST'])]
     public function addToCart(Request $request, ProductRepository $productRepository, int $id): JsonResponse
     {
-        // Retrieve the product from the database
-        $product = $productRepository->find($id);
+        $request = Request::createFromGlobals();
 
-        // Check if the product exists
-        if (!$product) {
+        // Check if a cookie exists
+        if ($request->cookies->has('user_id')) {
+            $cookieValue = $request->cookies->get('user_id');
             return new JsonResponse([
-                'status' => '404',
-                'message' => 'Product not found',
+                'status' => 'YES cookie',
+                'cookie : user_id' => $cookieValue,
+            ]);
+        } else {
+            return new JsonResponse([
+                'status' => 'NO cookie',
             ]);
         }
 
-        // Add the product to the cart
-        $cart = $request->getSession()->get('cart', []);
-        if (!isset($cart[$id])) {
-            $cart[$id] = [
-                'product' => $product,
-                'quantity' => 1,
-            ];
-        } else {
-            $cart[$id]['quantity']++;
-        }
-        $request->getSession()->set('cart', $cart);
 
-        // Return a success response
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Product added to cart',
-        ]);
+        // $product = $productRepository->find($id);
+        // if (!$product) {
+        //     return new JsonResponse([
+        //         'status' => '404',
+        //         'message' => 'Product not found',
+        //     ]);
+        // }
+
+        // $cart = $request->getSession()->get('cart', []);
+        // if (!isset($cart[$id])) {
+        //     $cart[$id] = [
+        //         'product' => $product,
+        //         'quantity' => 1,
+        //     ];
+        // } else {
+        //     $cart[$id]['quantity']++;
+        // }
+        // $request->getSession()->set('cart', $cart);
+
+        // return new JsonResponse([
+        //     'status' => 'success',
+        //     'message' => 'Product added to cart',
+        // ]);
     }
 }

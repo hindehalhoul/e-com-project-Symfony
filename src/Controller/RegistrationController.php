@@ -49,7 +49,6 @@ class RegistrationController extends AbstractController
         ]);
 
         $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
-
         // Return a success JSON response
         return $response;
     }
