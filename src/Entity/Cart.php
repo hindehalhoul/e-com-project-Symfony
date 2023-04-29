@@ -13,65 +13,65 @@ class Cart
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $user_id = null;
+    #[ORM\Column]
+    private ?int $user_id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $product_id = null;
+    #[ORM\Column]
+    private ?int $product_id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $quantity = null;
+    #[ORM\Column]
+    private ?int $quantity = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $price = null;
+    #[ORM\Column]
+    private ?float $price = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUserId(): ?string
+    public function getUserId(): ?int
     {
         return $this->user_id;
     }
 
-    public function setUserId(string $user_id): self
+    public function setUserId(int $user_id): self
     {
         $this->user_id = $user_id;
 
         return $this;
     }
 
-    public function getProductId(): ?string
+    public function getProductId(): ?int
     {
         return $this->product_id;
     }
 
-    public function setProductId(string $product_id): self
+    public function setProductId(int $product_id): self
     {
         $this->product_id = $product_id;
 
         return $this;
     }
 
-    public function getQuantity(): ?string
+    public function getQuantity(): ?int
     {
         return $this->quantity;
     }
 
-    public function setQuantity(string $quantity): self
+    public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
 
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getPrice(): ?float
     {
         return $this->price;
     }
 
-    public function setPrice(string $price): self
+    public function setPrice(float $price): self
     {
         $this->price = $price;
 
