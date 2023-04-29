@@ -39,6 +39,7 @@ class CartController extends AbstractController
                     'image' => $product->getImage(),
                 ];
                 $cartItems[] = [
+                    'id' => $cart->getId(),
                     'product' => $productData,
                     'quantity' => $cart->getQuantity(),
                     'price' => $cart->getPrice(),
@@ -59,5 +60,29 @@ class CartController extends AbstractController
                 'login_url' => $this->generateUrl('app_login'),
             ]);
         }
+    }
+
+    #[Route('/cart/update/{id}', name: 'cart_update', methods: ['POST'])]
+    public function updateQte(Request $request, EntityManagerInterface $entityManager, int $id): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $cart = $entityManager->getRepository(Cart::class)->find($id);
+
+        if (!$cart) {
+            return new JsonResponse([
+                'status' => 'Failed',
+                'message' => 'Cart not found',
+            ]);
+        }
+        $quantity = $data['quantity'];
+        $cart->setQuantity($quantity);
+        $entityManager->persist($cart);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'status' => 'Success',
+            'message' => 'Cart quantity updated !',
+            'view cart' => $this->generateUrl('cart'),
+        ]);
     }
 }
