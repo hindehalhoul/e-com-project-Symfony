@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -6,55 +7,79 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Cookie;
 
 class CartController extends AbstractController
 {
     #[Route('/cart', name: 'cart', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(EntityManagerInterface $entityManager): JsonResponse
     {
-        $cart = $request->getSession()->get('cart', []);
-        $data = [];
+        $cookieRequest = Request::createFromGlobals();
+        $total = 0;
 
-        foreach ($cart as $id => $item) {
-            $data[] = [
-                'id' => $item['product']->getId(),
-                'name' => $item['product']->getNom(),
-                'price (Dhs)' => $item['product']->getPrix(),
-                'quantity' => $item['quantity'],
-            ];
+        // Check if a cookie exists
+        if ($cookieRequest->cookies->has('user_id')) {
+            $userId = $cookieRequest->cookies->get('user_id');
+            $carts = $entityManager->getRepository(Cart::class)->findBy([
+                'user_id' => $userId,
+            ]);
+            $cartItems = [];
+            $productData = [];
+            foreach ($carts as $cart) {
+                $productId = $cart->getProductId();
+                $product = $entityManager->getRepository(Product::class)->find($productId);
+                $productData = [
+                    'id' => $product->getId(),
+                    'name' => $product->getNom(),
+                    'price' => $product->getPrix(),
+                    'description' => $product->getDescription(),
+                    'image' => $product->getImage(),
+                ];
+                $cartItems[] = [
+                    'id' => $cart->getId(),
+                    'product' => $productData,
+                    'quantity' => $cart->getQuantity(),
+                    'price' => $cart->getPrice(),
+                ];
+                $qte = $cart->getQuantity();
+                $price = $cart->getPrice();
+                $total += ($price * $qte);
+            }
+            return new JsonResponse([
+                'status' => 'success',
+                'cart' => $cartItems,
+                'total' => $total,
+            ]);
+        } else {
+            return new JsonResponse([
+                'status' => 'Failed',
+                'message' => 'Not connected',
+                'login_url' => $this->generateUrl('app_login'),
+            ]);
         }
-
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Cart fetched successfully',
-            'data' => $data
-        ]);
     }
-}
-#[Route('/cart/delete/{id}', name: 'cart_delete', methods: ['DELETE'])]
-public function delete(Request $request, int $id): JsonResponse
-{
-    $cart = $request->cookies->get('cart', '{}');
-    $cart = json_decode($cart, true);
 
-    if (isset($cart[$id])) {
-        unset($cart[$id]);
-        $cart = json_encode($cart);
+    #[Route('/cart/update/{id}', name: 'cart_update', methods: ['POST'])]
+    public function updateQte(Request $request, EntityManagerInterface $entityManager, int $id): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $cart = $entityManager->getRepository(Cart::class)->find($id);
 
-        // Create a new cookie with the updated cart data and the same expiration time
-        $response = new JsonResponse([
-            'status' => 'success',
-            'message' => 'Product removed from cart successfully'
-        ]);
-        $response->headers->setCookie(new Cookie('cart', $cart, strtotime('+1 year')));
+        if (!$cart) {
+            return new JsonResponse([
+                'status' => 'Failed',
+                'message' => 'Cart not found',
+            ]);
+        }
+        $quantity = $data['quantity'];
+        $cart->setQuantity($quantity);
+        $entityManager->persist($cart);
+        $entityManager->flush();
 
-        return $response;
-    } else {
         return new JsonResponse([
-            'status' => 'error',
-            'message' => 'Product not found in cart'
-        ], 404);
+            'status' => 'Success',
+            'message' => 'Cart quantity updated !',
+            'view cart' => $this->generateUrl('cart'),
+        ]);
     }
 }
 
