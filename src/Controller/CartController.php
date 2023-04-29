@@ -7,6 +7,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\EntityManagerInterface;
+
+use App\Entity\Cart;
+
 
 class CartController extends AbstractController
 {
@@ -81,66 +85,29 @@ class CartController extends AbstractController
             'view cart' => $this->generateUrl('cart'),
         ]);
     }
+
+#[Route('/cart/delete/{id}', name: 'cart_delete', methods: ['DELETE'])]
+public function deleteProduct(EntityManagerInterface $entityManager, int $id): JsonResponse
+{
+    $cart = $entityManager->getRepository(Cart::class)->find($id);
+
+    if (!$cart) {
+        return new JsonResponse([
+            'status' => 'Failed',
+            'message' => 'Product not found',
+        ]);
+    }
+
+    $entityManager->remove($cart);
+    $entityManager->flush();
+
+    return new JsonResponse([
+        'status' => 'Success',
+        'message' => 'Product deleted from the cart',
+        'view cart' => $this->generateUrl('cart'),
+    ]);
+}
 }
 
 
-// namespace App\Controller;
 
-// use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-// use Symfony\Component\Routing\Annotation\Route;
-// use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
-// use Symfony\Component\HttpFoundation\JsonResponse;
-
-// class CartController extends AbstractController
-// {
-//     #[Route('/cart', name: 'app_cart', methods: ['GET'])]
-
-//     public function showCart(SessionInterface $session): JsonResponse
-// {
-//     $cart = $session->get('cart', []);
-//     $cartItems = [];
-
-//     foreach ($cart as $productId => $productData) {
-//         $product = $this->getDoctrine()->getRepository(Product::class)->find($productId);
-
-//         if ($product) {
-//             $cartItems[] = [
-//                 'product' => $product,
-//                 'quantity' => $productData['quantity'],
-//                 'total_price' => $productData['quantity'] * $product->getPrice(),
-//             ];
-//         }
-//     }
-
-//     return $this->json([
-//         'cartItems' => $cartItems,
-//     ]);
-// }
-//     public function index(): Response
-//     {
-//         $session = $this->getRequest()->getSession();
-//         $cart = $session->get('cart', []);
-
-//         $cartItems = [];
-
-// foreach ($cart as $productId => $productData) {
-//     $product = $this->getDoctrine()->getRepository(Product::class)->find($productId);
-
-//     if ($product) {
-//         $cartItems[] = [
-//             'product' => $product,
-//             'quantity' => $productData['quantity'],
-//             'total_price' => $productData['quantity'] * $product->getPrice(),
-//         ];
-//     }
-// }
-
-
-// return $this->json([
-//     'cartItems' => $cartItems,
-// ]);
-
-//     }
-// }
