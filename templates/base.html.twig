@@ -51,15 +51,9 @@
                     <h2 class="product-title">{{ product.Nom }}</h2>
                     <img class="product-image" src="{{ asset('images/' ~ product.image) }}" alt="Image">
                     <p class="product-price">Prix : {{ product.Prix }} Dhs</p>
-                      {# <button><a href="{{ path('prod_details', {id: product.id}) }}">plus de details</a></button> #}
-                <a href="{{ path('prod_details', {id: product.id}) }}">plus de détails</a>
-
+                    <a href="{{ path('prod_details', {id: product.id}) }}">plus de détails</a>
                 </div>
             {% endfor %}
         </div>
-        
-        {% block body %}
-        
-        {% endblock %}
     </body>
 </html>

@@ -1,5 +1,16 @@
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %} #}
 
+<head>
+	<meta charset="UTF-8">
+	<title>
+		{% block title %}Welcome!
+		{% endblock %}
+	</title>
+	{% block head %}
+    <link rel="stylesheet" href="{{ asset('css/details.css') }}">
+{% endblock %}
+
+</head>
 {% block body %}
     <div class="container">
         <h1>{{ product.nom }}</h1>
@@ -9,6 +20,4 @@
         <button><a href="{{ path('home') }}">Revenir à la page d'accueil</a></button>
     </div>
 {% endblock %}
-
-
 
