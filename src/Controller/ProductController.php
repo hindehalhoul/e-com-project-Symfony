@@ -4,12 +4,13 @@ namespace App\Controller;
 
 use App\Entity\Cart;
 use App\Entity\User;
-
+use App\Entity\Product;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,7 +26,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
+    #[Route('/product/{id}', name: 'prod_details', methods: ['POST', 'GET'])]
     public function showProdDetails(ProductRepository $productRepository, int $id): Response
     {
         $product = $productRepository->find($id);

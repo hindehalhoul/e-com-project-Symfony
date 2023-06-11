@@ -19,32 +19,6 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register', methods: ['GET', 'POST'])]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        // $data = json_decode($request->getContent(), true);
-
-        // $user = new User();
-        // $user->setUsername($data['username']);
-        // $user->setFirstName($data['first_name']);
-        // $user->setLastName($data['last_name']);
-        // $user->setEmail($data['email']);
-
-        // $password = $userPasswordHasher->hashPassword($user, $data['password']);
-        // $user->setPassword($password);
-
-        // $entityManager->persist($user);
-        // $entityManager->flush();
-        // $response = $this->json([
-        //     'status' => 'success',
-        //     'message' => 'User registered successfully',
-        //     'user' => [
-        //         'username' => $user->getUsername(),
-        //         'email' => $user->getEmail(),
-        //         'first_name' => $user->getFirstName(),
-        //         'last_name' => $user->getLastName(),
-        //     ],
-        // ]);
-
-        // $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
-        // // return $response;
         if ($request->isMethod('POST')) {
             $username = $request->request->get('username');
             $firstName = $request->request->get('first_name');
