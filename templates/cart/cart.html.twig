@@ -1,0 +1,56 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<link rel="stylesheet" href="{{ asset('css/cart.css') }}">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Login</title>
+	</head>
+	<body>
+		<h1>My Cart</h1>
+		{% block content %}
+			<div class="cart-container">
+				{% if cart is empty %}
+					<p>Your cart is empty.</p>
+				{% else %}
+					<table class="cart-table">
+						<thead>
+							<tr>
+								<th>Product</th>
+								<th>Quantity</th>
+								<th>Unity Price</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for item in cart %}
+								<tr>
+									<td>
+										<img src="{{ item.product.image }}" alt="{{ item.product.name }}" class="product-image">
+										<div class="product-info">
+											<p class="product-name">{{ item.product.name }}</p>
+											<p class="product-id">ID:
+												{{ item.product.id }}</p>
+										</div>
+									</td>
+									<td>
+										<input type="number" min="1" value="{{ item.quantity }}" class="quantity-input">
+									</td>
+									<td>{{ item.price }}
+										Dh</td>
+									<td>
+										<button class="delete-button">Delete</button>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					<p class="cart-total">Total:
+						{{ total }}
+						DH</p>
+				{% endif %}
+			</div>
+		{% endblock %}
+
+	</body>
+</html>

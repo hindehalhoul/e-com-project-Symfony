@@ -6,12 +6,12 @@ use App\Entity\Cart;
 use App\Entity\User;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends AbstractController
 {
@@ -40,12 +40,10 @@ class ProductController extends AbstractController
 }
 
 
-
-    #[Route('/{id}/add-to-cart', name: 'add_to_cart', methods: ['POST'])]
-    public function addToCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, int $id): JsonResponse
+    #[Route('/{id}/add-to-cart', name: 'add_to_cart', methods: ['POST', 'GET'])]
+    public function addToCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, int $id): Response
     {
         $cookieRequest = Request::createFromGlobals();
-        // $product = $productRepository->find($id);
 
         if ($request->cookies->has('user_id')) {
             $product = $productRepository->find($id);
@@ -61,7 +59,6 @@ class ProductController extends AbstractController
                     'message' => 'Product not found',
                 ]);
             }
-            // If the user doesn't have a cart yet, create one
             if (!$cart) {
                 $cart = new Cart();
                 $cart->setUserId($userId);
@@ -75,24 +72,15 @@ class ProductController extends AbstractController
                         'quantity' => 1,
                     ];
                 } else {
-                    // $cart[$id]['quantity']++;
                     $cart->setQuantity($cart->getQuantity() + 1);;
                 }
             }
-            // Save the changes to the database
             $entityManager->persist($cart);
             $entityManager->flush();
 
-            return new JsonResponse([
-                'status' => 'success',
-                'message' => 'Product added to cart',
-            ]);
+            return $this->redirectToRoute('cart');
         } else {
-            return new JsonResponse([
-                'status' => 'Failed',
-                'message' => 'Not conneted',
-                'login_url' => $this->generateUrl('app_login'),
-            ]);
+            return $this->redirectToRoute('app_login');
         }
     }
 }

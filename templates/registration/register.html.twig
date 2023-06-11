@@ -1,22 +1,62 @@
-{% extends 'base.html.twig' %}
+{# {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Register
+{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+	<h1>Register</h1>
 
-    {{ form_start(registrationForm) }}
-     {{ form_row(registrationForm.first_name) }}
-      {{ form_row(registrationForm.last_name) }}
-    {{ form_row(registrationForm.username) }}
-     {{ form_row(registrationForm.email) }}
-        
-        {{ form_row(registrationForm.plainPassword, {
+	{{ form_start(registrationForm) }}
+	{{ form_row(registrationForm.first_name) }}
+	{{ form_row(registrationForm.last_name) }}
+	{{ form_row(registrationForm.username) }}
+	{{ form_row(registrationForm.email) }}
+
+	{{ form_row(registrationForm.plainPassword, {
             label: 'Password'
         }) }}
-       
-        {{ form_row(registrationForm.agreeTerms) }}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
-{% endblock %}
+	{{ form_row(registrationForm.agreeTerms) }}
+
+	<button type="submit" class="btn">Register</button>
+	{{ form_end(registrationForm) }}
+{% endblock %} #}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<link rel="stylesheet" href="{{ asset('css/register.css') }}">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>Signup</title>
+	</head>
+
+	<body>
+		<div class="signup-div">
+			<h2>Register</h2>
+			<form method="post" class="signup-form">
+				<input type="text" name="last_name" class="signup-input" placeholder="Last name" required/>
+				<br/><br/>
+				<input type="text" name="first_name" class="signup-input" placeholder="First name" required/>
+				<br/><br/>
+				<input type="text" name="username" class="signup-input" placeholder="Username" required/>
+				<br/><br/>
+				<input type="email" name="email" class="signup-input" placeholder="Email" required/>
+				<br/><br/>
+				<input type="password" name="password" class="signup-input" placeholder="Password" required/>
+				<br/><br/>
+				<button type="submit" value="signup" name="signup" class="signup-button">
+					Signup
+				</button>
+				<br/><br/>
+				<div class="already-auth">
+					<span class="signup-button-div"></span>Already registered?&nbsp;</span>
+				<br/>
+				<a href="/login" class="signup-button-div">Login now</a>
+			</div>
+		</form>
+	</body>
+</html></div></body></html>
