@@ -11,7 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 // use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Cookie;
 
 
 class RegistrationController extends AbstractController
@@ -47,32 +46,30 @@ class RegistrationController extends AbstractController
         // $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
         // // return $response;
         if ($request->isMethod('POST')) {
-            if ($request->isMethod('POST')) {
-                $username = $request->request->get('username');
-                $firstName = $request->request->get('first_name');
-                $lastName = $request->request->get('last_name');
-                $email = $request->request->get('email');
-                $password = $request->request->get('password');
+            $username = $request->request->get('username');
+            $firstName = $request->request->get('first_name');
+            $lastName = $request->request->get('last_name');
+            $email = $request->request->get('email');
+            $password = $request->request->get('password');
 
-                $user = new User();
-                $user->setUsername($username);
-                $user->setFirstName($firstName);
-                $user->setLastName($lastName);
-                $user->setEmail($email);
+            $user = new User();
+            $user->setUsername($username);
+            $user->setFirstName($firstName);
+            $user->setLastName($lastName);
+            $user->setEmail($email);
 
-                $hashedPassword = $userPasswordHasher->hashPassword($user, $password);
-                $user->setPassword($hashedPassword);
+            $hashedPassword = $userPasswordHasher->hashPassword($user, $password);
+            $user->setPassword($hashedPassword);
 
-                $entityManager->persist($user);
-                $entityManager->flush();
+            $entityManager->persist($user);
+            $entityManager->flush();
 
-                echo '<script>alert("Account created ! Please Login ")</script>';
+            echo '<script>alert("Account created ! Please Login ")</script>';
 
-                $response = $this->render('security/login.html.twig', [
-                    'user' => $user
-                ]);
-                return $response;
-            }
+            $response = $this->render('security/login.html.twig', [
+                'user' => $user
+            ]);
+            return $response;
         }
         return $this->render('registration/register.html.twig');
     }

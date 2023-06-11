@@ -11,26 +11,28 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends AbstractController
 {
     #[Route('/', name: 'home', methods: ['GET'])]
-    public function index(ProductRepository $productRepository): JsonResponse
+    public function index(ProductRepository $productRepository): Response
     {
-        $products = $productRepository->findAll();
-        $data = [];
-        foreach ($products as $product) {
-            $data[] = [
-                'id' => $product->getId(),
-                'name' => $product->getNom(),
-                'price (Dhs)' => $product->getPrix()
-            ];
-        }
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Products fetched successfully',
-            'data' => $data
-        ]);
+        // $products = $productRepository->findAll();
+        // $data = [];
+        // foreach ($products as $product) {
+        //     $data[] = [
+        //         'id' => $product->getId(),
+        //         'name' => $product->getNom(),
+        //         'price (Dhs)' => $product->getPrix()
+        //     ];
+        // }
+        // return new JsonResponse([
+        //     'status' => 'success',
+        //     'message' => 'Products fetched successfully',
+        //     'data' => $data
+        // ]);
+        return $this->render('base.html.twig');
     }
 
     // #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
