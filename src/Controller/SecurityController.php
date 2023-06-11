@@ -45,7 +45,8 @@ class SecurityController extends AbstractController
                     $response = $this->redirectToRoute('home', [
                         'user' => $user
                     ]);
-                    setcookie("user_id", $user->getId());
+                    $response->headers->setCookie(new Cookie('user_id', $user->getId()));
+                    // setcookie("user_id", $user->getId());
                     return $response;
                 } else {
                     echo '<script>alert("Invalid email or password !")</script>';
@@ -55,11 +56,24 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig');
     }
 
-
     #[Route(path: '/logout', name: 'app_logout', methods: ['GET', 'POST'])]
-    public function logout(): Response
+    public function logout(Response $response): Response
     {
-        setcookie("token_id", "amina");
-        return $this->redirectToRoute('app_login');
+        $response = new Response();
+        $response = $this->redirectToRoute('app_login');
+        $response->headers->setCookie(new Cookie('user_id', ''));
+        return $response;
     }
+    // #[Route(path: '/logout', name: 'app_logout', methods: ['GET'])]
+    // public function logout(): Response
+    // {
+    //     $request = Request::createFromGlobals();
+    //     $response = new Response();
+    //     $response->headers->clearCookie('user_id');
+    //     $response->headers->setCookie(
+    //         Cookie::create('user_id', null, time() - 3600)
+    //     );
+    //     $response->send();
+    //     return $response;
+    // }
 }

@@ -15,13 +15,12 @@ use App\Entity\Product;
 
 class CartController extends AbstractController
 {
-    #[Route('/cart', name: 'cart', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/cart', name: 'cart', methods: ['POST', 'GET'])]
+    public function index(EntityManagerInterface $entityManager): Response
     {
         $cookieRequest = Request::createFromGlobals();
         $total = 0;
 
-        // Check if a cookie exists
         if ($cookieRequest->cookies->has('user_id')) {
             $userId = $cookieRequest->cookies->get('user_id');
             $carts = $entityManager->getRepository(Cart::class)->findBy([
@@ -36,7 +35,6 @@ class CartController extends AbstractController
                     'id' => $product->getId(),
                     'name' => $product->getNom(),
                     'price' => $product->getPrix(),
-                    'description' => $product->getDescription(),
                     'image' => $product->getImage(),
                 ];
                 $cartItems[] = [
@@ -49,17 +47,12 @@ class CartController extends AbstractController
                 $price = $cart->getPrice();
                 $total += ($price * $qte);
             }
-            return new JsonResponse([
-                'status' => 'success',
+            return $this->render('cart/cart.html.twig', [
                 'cart' => $cartItems,
                 'total' => $total,
             ]);
         } else {
-            return new JsonResponse([
-                'status' => 'Failed',
-                'message' => 'Not connected',
-                'login_url' => $this->generateUrl('app_login'),
-            ]);
+            return $this->redirectToRoute('app_login');
         }
     }
 
