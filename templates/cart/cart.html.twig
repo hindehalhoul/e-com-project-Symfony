@@ -1,9 +1,3 @@
-{# {% block title %}Hello CartController!
-{% endblock %}
-
-{% block body %}
-	<h1>CART</h1>
-{% endblock %} #}
 <html lang="en">
 	<head>
 		<meta charset="UTF-8"/>
@@ -13,6 +7,7 @@
 		<title>Login</title>
 	</head>
 	<body>
+		<h1>My Cart</h1>
 		{% block content %}
 			<div class="cart-container">
 				{% if cart is empty %}
@@ -23,9 +18,8 @@
 							<tr>
 								<th>Product</th>
 								<th>Quantity</th>
-								<th>Price</th>
-								<th>Total</th>
-								<th>Actions</th>
+								<th>Unity Price</th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -42,8 +36,8 @@
 									<td>
 										<input type="number" min="1" value="{{ item.quantity }}" class="quantity-input">
 									</td>
-									<td>{{ item.price }}</td>
-									<td>{{ item.price * item.quantity }}</td>
+									<td>{{ item.price }}
+										Dh</td>
 									<td>
 										<button class="delete-button">Delete</button>
 									</td>
@@ -52,7 +46,8 @@
 						</tbody>
 					</table>
 					<p class="cart-total">Total:
-						{{ total }}</p>
+						{{ total }}
+						DH</p>
 				{% endif %}
 			</div>
 		{% endblock %}

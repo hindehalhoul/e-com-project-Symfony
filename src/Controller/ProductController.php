@@ -62,54 +62,47 @@ class ProductController extends AbstractController
     // }
 
 
-    // #[Route('/{id}/add-to-cart', name: 'add_to_cart', methods: ['POST'])]
-    // public function addToCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, int $id): JsonResponse
-    // {
-    //     $cookieRequest = Request::createFromGlobals();
+    #[Route('/{id}/add-to-cart', name: 'add_to_cart', methods: ['POST', 'GET'])]
+    public function addToCart(Request $request, EntityManagerInterface $entityManager, ProductRepository $productRepository, int $id): Response
+    {
+        $cookieRequest = Request::createFromGlobals();
 
-    //     if ($request->cookies->has('user_id')) {
-    //         $product = $productRepository->find($id);
-    //         $userId = $cookieRequest->cookies->get('user_id');
-    //         $user = $entityManager->getRepository(User::class)->find($userId);
-    //         $cart = $entityManager->getRepository(Cart::class)->findOneBy([
-    //             'user_id' => $userId,
-    //             'product_id' => $id,
-    //         ]);
-    //         if (!$product) {
-    //             return new JsonResponse([
-    //                 'status' => '404',
-    //                 'message' => 'Product not found',
-    //             ]);
-    //         }
-    //         if (!$cart) {
-    //             $cart = new Cart();
-    //             $cart->setUserId($userId);
-    //             $cart->setProductId($id);
-    //             $cart->setQuantity(1);
-    //             $cart->setPrice($product->getPrix());
-    //         } else {
-    //             if (!isset($cart)) {
-    //                 $cart = [
-    //                     'product' => $product,
-    //                     'quantity' => 1,
-    //                 ];
-    //             } else {
-    //                 $cart->setQuantity($cart->getQuantity() + 1);;
-    //             }
-    //         }
-    //         $entityManager->persist($cart);
-    //         $entityManager->flush();
+        if ($request->cookies->has('user_id')) {
+            $product = $productRepository->find($id);
+            $userId = $cookieRequest->cookies->get('user_id');
+            $user = $entityManager->getRepository(User::class)->find($userId);
+            $cart = $entityManager->getRepository(Cart::class)->findOneBy([
+                'user_id' => $userId,
+                'product_id' => $id,
+            ]);
+            if (!$product) {
+                return new JsonResponse([
+                    'status' => '404',
+                    'message' => 'Product not found',
+                ]);
+            }
+            if (!$cart) {
+                $cart = new Cart();
+                $cart->setUserId($userId);
+                $cart->setProductId($id);
+                $cart->setQuantity(1);
+                $cart->setPrice($product->getPrix());
+            } else {
+                if (!isset($cart)) {
+                    $cart = [
+                        'product' => $product,
+                        'quantity' => 1,
+                    ];
+                } else {
+                    $cart->setQuantity($cart->getQuantity() + 1);;
+                }
+            }
+            $entityManager->persist($cart);
+            $entityManager->flush();
 
-    //         return new JsonResponse([
-    //             'status' => 'success',
-    //             'message' => 'Product added to cart',
-    //         ]);
-    //     } else {
-    //         return new JsonResponse([
-    //             'status' => 'Failed',
-    //             'message' => 'Not conneted',
-    //             'login_url' => $this->generateUrl('app_login'),
-    //         ]);
-    //     }
-    // }
+            return $this->redirectToRoute('cart');
+        } else {
+            return $this->redirectToRoute('app_login');
+        }
+    }
 }
