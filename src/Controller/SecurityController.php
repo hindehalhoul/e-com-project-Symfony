@@ -42,10 +42,10 @@ class SecurityController extends AbstractController
                 echo '<script>alert("Invalid email or password !")</script>';
             } else {
                 if ($this->passwordHasher->isPasswordValid($user, $password)) {
-                    $response = $this->render('home', [
+                    $response = $this->redirectToRoute('home', [
                         'user' => $user
                     ]);
-                    $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
+                    setcookie("user_id", $user->getId());
                     return $response;
                 } else {
                     echo '<script>alert("Invalid email or password !")</script>';
@@ -59,20 +59,7 @@ class SecurityController extends AbstractController
     #[Route(path: '/logout', name: 'app_logout', methods: ['GET', 'POST'])]
     public function logout(): Response
     {
-        echo '<script>alert("logout 1")</script>';
-        $response = new Response();
-        echo '<script>alert("logout 2")</script>';
-        $response->headers->clearCookie('user_id');
-        echo '<script>alert("logout 3")</script>';
-        $response->headers->setCookie(
-            Cookie::create('user_id', null, time() - 3600)
-        );
-        echo '<script>alert("logout 4")</script>';
-        $response->send();
-        echo '<script>alert("logout 5")</script>';
-        $this->redirectToRoute('app_login');
-        echo '<script>alert("logout 6")</script>';
-
-        return $response;
+        setcookie("token_id", "amina");
+        return $this->redirectToRoute('app_login');
     }
 }

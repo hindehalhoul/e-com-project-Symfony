@@ -5,9 +5,10 @@
 	<h1>Hello</h1>
 
 	<hr/>
-	<form action="{{ path('app_logout') }}" method="post">
+	<form method="POST">
 		<button>
-			Logout
+			<a href="{{ path('app_logout') }}">Logout</a>
 		</button>
 	</form>
+
 {% endblock %}
