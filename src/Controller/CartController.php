@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 
 use App\Entity\Cart;
+use App\Entity\Product;
 
 
 class CartController extends AbstractController

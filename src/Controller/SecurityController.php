@@ -32,7 +32,7 @@ class SecurityController extends AbstractController
     }
 
 
-    #[Route(path: '/login', name: 'app_login')]
+    #[Route(path: '/login', name: 'app_login',methods: ['POST'])]
     public function login(Request $request, SessionInterface $session, UserRepository $userRepository): JsonResponse
     {
 

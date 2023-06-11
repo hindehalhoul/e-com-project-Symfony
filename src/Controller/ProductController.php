@@ -16,49 +16,72 @@ use Doctrine\ORM\EntityManagerInterface;
 class ProductController extends AbstractController
 {
     #[Route('/', name: 'home', methods: ['GET'])]
-    public function index(ProductRepository $productRepository): JsonResponse
+    public function index(ProductRepository $productRepository): Response
     {
         $products = $productRepository->findAll();
-        $data = [];
-        foreach ($products as $product) {
-            $data[] = [
-                'id' => $product->getId(),
-                'name' => $product->getNom(),
-                'price (Dhs)' => $product->getPrix()
-            ];
-        }
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Products fetched successfully',
-            'data' => $data
+
+        return $this->render('base.html.twig', [
+            'products' => $products
         ]);
     }
+    // #[Route('/', name: 'home', methods: ['GET'])]
+    // public function index(ProductRepository $productRepository): JsonResponse
+    // {
+    //     $products = $productRepository->findAll();
+    //     $data = [];
+    //     foreach ($products as $product) {
+    //         $data[] = [
+    //             'id' => $product->getId(),
+    //             'name' => $product->getNom(),
+    //             'price (Dhs)' => $product->getPrix()
+    //         ];
+    //     }
+    //     return new JsonResponse([
+    //         'status' => 'success',
+    //         'message' => 'Products fetched successfully',
+    //         'data' => $data
+    //     ]);
+    // }
 
-    #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
-    public function showProdDetails(ProductRepository $productRepository, int $id): JsonResponse
-    {
-        $product = $productRepository->find($id);
-        $data = [];
+    // #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
+    // public function showProdDetails(ProductRepository $productRepository, int $id): JsonResponse
+    // {
+    //     $product = $productRepository->find($id);
+    //     $data = [];
 
-        if (!$product) {
-            return new JsonResponse([
-                'status' => '404',
-                'message' => 'Product not found',
-            ]);
-        }
-        return new JsonResponse([
-            'status' => 'success',
-            'message' => 'Product fetched successfully',
-            'product' => [
-                'id' => $product->getId(),
-                'name' => $product->getNom(),
-                'price (Dhs)' => $product->getPrix(),
-                'description' => $product->getDescription(),
-                'image' => $product->getImage(),
-                'add_to_cart_url' => $this->generateUrl('add_to_cart', ['id' => $product->getId()]),
-            ]
-        ]);
+    //     if (!$product) {
+    //         return new JsonResponse([
+    //             'status' => '404',
+    //             'message' => 'Product not found',
+    //         ]);
+    //     }
+    //     return new JsonResponse([
+    //         'status' => 'success',
+    //         'message' => 'Product fetched successfully',
+    //         'product' => [
+    //             'id' => $product->getId(),
+    //             'name' => $product->getNom(),
+    //             'price (Dhs)' => $product->getPrix(),
+    //             'description' => $product->getDescription(),
+    //             'image' => $product->getImage(),
+    //             'add_to_cart_url' => $this->generateUrl('add_to_cart', ['id' => $product->getId()]),
+    //         ]
+    //     ]);
+    // }
+     #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
+    public function showProdDetails(ProductRepository $productRepository, int $id): Response
+{
+    $product = $productRepository->find($id);
+
+    if (!$product) {
+        throw $this->createNotFoundException('Product not found');
     }
+
+    return $this->render('product/details.html.twig', [
+        'product' => $product,
+    ]);
+}
+
 
 
     #[Route('/{id}/add-to-cart', name: 'add_to_cart', methods: ['POST'])]

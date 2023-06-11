@@ -7,6 +7,36 @@
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
+            <style>
+                /* CSS styles */
+                .products {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                }
+
+                .product {
+                    width: calc(33.33% - 20px);
+                    margin-bottom: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .product-title {
+                    font-size: 20px;
+                    margin-bottom: 10px;
+                }
+
+                .product-image {
+                    max-width: 200px;
+                    margin-bottom: 10px;
+                }
+
+                .product-price {
+                    font-weight: bold;
+                }
+            </style>
         {% endblock %}
 
         {% block javascripts %}
@@ -14,6 +44,22 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <h1>Page d'accueil</h1>
+        <div class="products">
+            {% for product in products %}
+                <div class="product">
+                    <h2 class="product-title">{{ product.Nom }}</h2>
+                    <img class="product-image" src="{{ asset('images/' ~ product.image) }}" alt="Image">
+                    <p class="product-price">Prix : {{ product.Prix }} Dhs</p>
+                      {# <button><a href="{{ path('prod_details', {id: product.id}) }}">plus de details</a></button> #}
+                <a href="{{ path('prod_details', {id: product.id}) }}">plus de détails</a>
+
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% block body %}
+        
+        {% endblock %}
     </body>
 </html>

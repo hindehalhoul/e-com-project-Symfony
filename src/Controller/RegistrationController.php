@@ -20,7 +20,7 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register', methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        // Get the JSON payload from the request body
+        
         $data = json_decode($request->getContent(), true);
 
         // Create a new user entity
@@ -30,11 +30,11 @@ class RegistrationController extends AbstractController
         $user->setLastName($data['last_name']);
         $user->setEmail($data['email']);
 
-        // Encode the password and set it on the user entity
+        
         $password = $userPasswordHasher->hashPassword($user, $data['password']);
         $user->setPassword($password);
 
-        // Persist the user entity to the database
+        // Enregistration des infor dans base de données 
         $entityManager->persist($user);
         $entityManager->flush();
         $response = $this->json([
@@ -49,7 +49,7 @@ class RegistrationController extends AbstractController
         ]);
 
         $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
-        // Return a success JSON response
+        
         return $response;
     }
 }
