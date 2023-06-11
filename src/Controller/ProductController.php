@@ -24,20 +24,20 @@ class ProductController extends AbstractController
             'products' => $products
         ]);
     }
-    
-     #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
+
+    #[Route('/{id}', name: 'prod_details', methods: ['GET'])]
     public function showProdDetails(ProductRepository $productRepository, int $id): Response
-{
-    $product = $productRepository->find($id);
+    {
+        $product = $productRepository->find($id);
 
-    if (!$product) {
-        throw $this->createNotFoundException('Product not found');
+        if (!$product) {
+            throw $this->createNotFoundException('Product not found');
+        }
+
+        return $this->render('product/details.html.twig', [
+            'product' => $product,
+        ]);
     }
-
-    return $this->render('product/details.html.twig', [
-        'product' => $product,
-    ]);
-}
 
 
     #[Route('/{id}/add-to-cart', name: 'add_to_cart', methods: ['POST', 'GET'])]
