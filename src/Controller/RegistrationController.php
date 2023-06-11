@@ -17,39 +17,63 @@ use Symfony\Component\HttpFoundation\Cookie;
 class RegistrationController extends AbstractController
 {
 
-    #[Route('/register', name: 'app_register', methods: ['POST'])]
+    #[Route('/register', name: 'app_register', methods: ['GET', 'POST'])]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        // Get the JSON payload from the request body
-        $data = json_decode($request->getContent(), true);
+        // $data = json_decode($request->getContent(), true);
 
-        // Create a new user entity
-        $user = new User();
-        $user->setUsername($data['username']);
-        $user->setFirstName($data['first_name']);
-        $user->setLastName($data['last_name']);
-        $user->setEmail($data['email']);
+        // $user = new User();
+        // $user->setUsername($data['username']);
+        // $user->setFirstName($data['first_name']);
+        // $user->setLastName($data['last_name']);
+        // $user->setEmail($data['email']);
 
-        // Encode the password and set it on the user entity
-        $password = $userPasswordHasher->hashPassword($user, $data['password']);
-        $user->setPassword($password);
+        // $password = $userPasswordHasher->hashPassword($user, $data['password']);
+        // $user->setPassword($password);
 
-        // Persist the user entity to the database
-        $entityManager->persist($user);
-        $entityManager->flush();
-        $response = $this->json([
-            'status' => 'success',
-            'message' => 'User registered successfully',
-            'user' => [
-                'username' => $user->getUsername(),
-                'email' => $user->getEmail(),
-                'first_name' => $user->getFirstName(),
-                'last_name' => $user->getLastName(),
-            ],
-        ]);
+        // $entityManager->persist($user);
+        // $entityManager->flush();
+        // $response = $this->json([
+        //     'status' => 'success',
+        //     'message' => 'User registered successfully',
+        //     'user' => [
+        //         'username' => $user->getUsername(),
+        //         'email' => $user->getEmail(),
+        //         'first_name' => $user->getFirstName(),
+        //         'last_name' => $user->getLastName(),
+        //     ],
+        // ]);
 
-        $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
-        // Return a success JSON response
-        return $response;
+        // $response->headers->setCookie(new Cookie('user_id', $user->getId(), strtotime('+1 year')));
+        // // return $response;
+        if ($request->isMethod('POST')) {
+            if ($request->isMethod('POST')) {
+                $username = $request->request->get('username');
+                $firstName = $request->request->get('first_name');
+                $lastName = $request->request->get('last_name');
+                $email = $request->request->get('email');
+                $password = $request->request->get('password');
+
+                $user = new User();
+                $user->setUsername($username);
+                $user->setFirstName($firstName);
+                $user->setLastName($lastName);
+                $user->setEmail($email);
+
+                $hashedPassword = $userPasswordHasher->hashPassword($user, $password);
+                $user->setPassword($hashedPassword);
+
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                echo '<script>alert("Account created ! Please Login ")</script>';
+
+                $response = $this->render('security/login.html.twig', [
+                    'user' => $user
+                ]);
+                return $response;
+            }
+        }
+        return $this->render('registration/register.html.twig');
     }
 }
