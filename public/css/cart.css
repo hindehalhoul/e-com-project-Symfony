@@ -20,8 +20,8 @@ h1 {
 }
 
 .product-image {
-	width: 50px;
-	height: 50px;
+	width: 65px;
+	height: 65px;
 	margin-right: 10px;
 	object-fit: cover;
 }
@@ -29,6 +29,7 @@ h1 {
 .product-info {
 	display: inline-block;
 	vertical-align: middle;
+	margin-top: -10%;
 }
 
 .product-name {
@@ -72,6 +73,6 @@ h1 {
 	padding: 5px;
 }
 a {
-	text-decoration: none;
+	text-decoration: underline;
 	color: black;
 }

@@ -7,17 +7,25 @@
 		{% endblock %}
 	</title>
 	{% block head %}
-    <link rel="stylesheet" href="{{ asset('css/details.css') }}">
-{% endblock %}
+		<link rel="stylesheet" href="{{ asset('css/details.css') }}">
+	{% endblock %}
 
 </head>
 {% block body %}
-    <div class="container">
-        <h1>{{ product.nom }}</h1>
-        <p><img src="{{ asset('images/' ~ product.image) }}" alt="{{ product.nom }} image" width="300" height="auto"></p>
-        <p>Description: {{ product.description }}</p>
-        <p id="price">Prix: {{ product.prix }} Dhs</p>
-        <button><a href="{{ path('home') }}">Revenir à la page d'accueil</a></button>
-    </div>
-{% endblock %}
+	<div class="container">
+		<h1>{{ product.nom }}</h1>
+		<p><img src="{{ asset('images/' ~ product.image) }}" alt="{{ product.nom }} image" width="300" height="auto"></p>
+		<p>Description:
+			{{ product.description }}</p>
+		<p id="price">Prix:
+			{{ product.prix }}
+			Dhs</p>
+		<button>
+			<a href="{{ path('add_to_cart', {'id': product.id}) }}">Add to Cart</a>
+		</button>
 
+		<button>
+			<a href="{{ path('home') }}">Revenir à la page d'accueil</a>
+		</button>
+	</div>
+{% endblock %}
