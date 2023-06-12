@@ -40,9 +40,8 @@ class RegistrationController extends AbstractController
 
             echo '<script>alert("Account created ! Please Login ")</script>';
 
-            $response = $this->render('security/login.html.twig', [
-                'user' => $user
-            ]);
+            // $response = $this->render('security/login.html.twig');
+            $response = $this->redirectToRoute('app_login');
             return $response;
         }
         return $this->render('registration/register.html.twig');
