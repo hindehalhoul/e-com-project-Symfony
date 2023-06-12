@@ -55,50 +55,44 @@ class CartController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
     }
+    #[Route('/cart/update/{id}', name: 'cart_update', methods: ['POST'])]
+    public function updateQte(Request $request, EntityManagerInterface $entityManager, int $id): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $cart = $entityManager->getRepository(Cart::class)->find($id);
 
-    // #[Route('/cart/update/{id}', name: 'cart_update', methods: ['POST'])]
-    // public function updateQte(Request $request, EntityManagerInterface $entityManager, int $id): JsonResponse
-    // {
-    //     $data = json_decode($request->getContent(), true);
-    //     $cart = $entityManager->getRepository(Cart::class)->find($id);
+        if (!$cart) {
+            return new JsonResponse([
+                'status' => 'Failed',
+                'message' => 'Cart not found',
+            ]);
+        }
 
-    //     if (!$cart) {
-    //         return new JsonResponse([
-    //             'status' => 'Failed',
-    //             'message' => 'Cart not found',
-    //         ]);
-    //     }
-    //     $quantity = $data['quantity'];
-    //     $cart->setQuantity($quantity);
-    //     $entityManager->persist($cart);
-    //     $entityManager->flush();
+        $quantity = $data['quantity'];
+        $cart->setQuantity($quantity);
 
-    //     return new JsonResponse([
-    //         'status' => 'Success',
-    //         'message' => 'Cart quantity updated !',
-    //         'view cart' => $this->generateUrl('cart'),
-    //     ]);
-    // }
+        $entityManager->flush();
 
-    // #[Route('/cart/delete/{id}', name: 'cart_delete', methods: ['DELETE'])]
-    // public function deleteProduct(EntityManagerInterface $entityManager, int $id): JsonResponse
-    // {
-    //     $cart = $entityManager->getRepository(Cart::class)->find($id);
+        return $this->redirectToRoute('cart');
+    }
 
-    //     if (!$cart) {
-    //         return new JsonResponse([
-    //             'status' => 'Failed',
-    //             'message' => 'Product not found',
-    //         ]);
-    //     }
 
-    //     $entityManager->remove($cart);
-    //     $entityManager->flush();
 
-    //     return new JsonResponse([
-    //         'status' => 'Success',
-    //         'message' => 'Product deleted from the cart',
-    //         'view cart' => $this->generateUrl('cart'),
-    //     ]);
-    // }
+    #[Route('/cart/delete/{id}', name: 'cart_delete', methods: ['DELETE'])]
+    public function deleteProduct(EntityManagerInterface $entityManager, int $id): JsonResponse
+    {
+        $cart = $entityManager->getRepository(Cart::class)->find($id);
+
+        if (!$cart) {
+            return new JsonResponse([
+                'status' => 'Failed',
+                'message' => 'Product not found',
+            ]);
+        }
+
+        $entityManager->remove($cart);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('cart');
+    }
 }

@@ -1,60 +1,134 @@
 {% include 'navbar/navbar.html.twig' %}
 
-
 <html lang="en">
-	<head>
-		<meta charset="UTF-8"/>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-		<link rel="stylesheet" href="{{ asset('css/cart.css') }}">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Cart</title>
-	</head>
-	<body>
-		<h1>
-			<a id="home-link" href="{{ path('home') }}">Home</a>&nbsp;/&nbsp;My Cart</h1>
-		{% block content %}
-			<div class="cart-container">
-				{% if cart is empty %}
-					<p>Your cart is empty.</p>
-				{% else %}
-					<table class="cart-table">
-						<thead>
-							<tr>
-								<th>Product</th>
-								<th>Quantity</th>
-								<th>Unity Price</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for item in cart %}
-								<tr>
-									<td>
-										<img src="{{ asset('images/' ~ item.product.image) }}" alt="{{ item.product.name }}" class="product-image">
-										<div class="product-info">
-											<p class="product-name">{{ item.product.name }}</p>
-											<p class="product-id">ID:
-												{{ item.product.id }}</p>
-										</div>
-									</td>
-									<td>
-										<input type="number" min="1" value="{{ item.quantity }}" class="quantity-input">
-									</td>
-									<td>{{ item.price }}
-										Dh</td>
-									<td>
-										<button class="delete-button">Delete</button>
-									</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-					<p class="cart-total">Total:
-						{{ total }}
-						DH</p>
-				{% endif %}
-			</div>
-		{% endblock %}
+    <head>
+        <meta charset="UTF-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <link rel="stylesheet" href="{{ asset('css/cart.css') }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Cart</title>
+    </head>
+    <body>
+        <h1>
+            <a id="home-link" href="{{ path('home') }}">Home</a>&nbsp;/&nbsp;My Cart
+        </h1>
+        {% block content %}
+        <div class="cart-container">
+            {% if cart is empty %}
+                <p>Your cart is empty.</p>
+            {% else %}
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+					
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                            <tr>
+                                <td>
+                                    <img src="{{ asset('images/' ~ item.product.image) }}" alt="{{ item.product.name }}" class="product-image">
+                                    <div class="product-info">
+                                        <p class="product-name">{{ item.product.name }}</p>
+                                        <p class="product-id">ID: {{ item.product.id }}</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="number" min="1" value="{{ item.quantity }}" class="quantity-input" id="quantity-input-{{ item.id }}" data-cart-item-id="{{ item.id }}">
+                                </td>
+                                <td>{{ item.price }} Dh</td>
+                                <td>
+                                    <button class="delete-button" data-cart-item-id="{{ item.id }}">Delete</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <p class="cart-total">Total: <span id="cart-total-value">{{ total }}</span> DH</p>
+            {% endif %}
+        </div>
+		
+        {% endblock %}
 
-	</body>
+        {% block javascripts %}
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+           function updateCartTotal() {
+    var total = 0;
+
+    // Calculer le nouveau total en parcourant les lignes du tableau
+    $('.cart-table tbody tr').each(function() {
+        var price = parseFloat($(this).find('.price-value').text());
+        var quantity = parseInt($(this).find('.quantity-input').val());
+
+        // Vérifier si la quantité et le prix sont des nombres valides
+        if (!isNaN(price) && !isNaN(quantity)) {
+            total += price * quantity;
+        }
+    });
+
+    // Mettre à jour l'affichage du total dans le DOM
+    $('#cart-total-value').text(total.toFixed(2));
+}
+
+            $(document).ready(function() {
+                $('.quantity-input').on('change', function() {
+                    var cartItemId = $(this).data('cart-item-id');
+                    var quantity = $(this).val();
+
+                    $.ajax({
+                        url: '/cart/update/' + cartItemId,
+                        method: 'POST',
+                        data: JSON.stringify({ 'quantity': quantity }),
+                        contentType: 'application/json',
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(error) {
+                            console.error(error);
+                        }
+                    });
+					 updateCartTotal();
+					 						   location.reload();    
+
+                });
+				
+
+
+                $('.delete-button').on('click', function() {
+                    var deleteButton = $(this);
+                    var cartItemId = deleteButton.data('cart-item-id');
+
+                    $.ajax({
+                        url: '/cart/delete/' + cartItemId,
+                        method: 'DELETE',
+                        success: function(response) {
+                            console.log(response);
+                            deleteButton.closest('tr').remove();
+
+                            // Vérifier si tous les produits ont été supprimés
+                            if ($('.cart-table tbody tr').length === 0) {
+                                $('.cart-table').remove();
+                                $('.cart-total').remove();
+                                $('#clear-cart-button').remove();
+                                $('.cart-container').append('<p>Your cart is empty.</p>');
+                            }
+
+                        },
+                        error: function(error) {
+                            console.error(error);
+                        }
+
+                    });
+										  location.reload();    
+
+                });
+            });
+        </script>
+        {% endblock %}
+    </body>
 </html>

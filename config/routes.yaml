@@ -9,3 +9,8 @@ kernel:
 app_logout:
   path: /logout
   controller: App\Controller\SecurityController::logout
+
+cart_update:
+    path: /cart/update/{id}
+    controller: App\Controller\CartController::updateQte
+    methods: POST
