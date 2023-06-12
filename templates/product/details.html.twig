@@ -17,7 +17,7 @@
 		<p><img src="{{ asset('images/' ~ product.image) }}" alt="{{ product.nom }} image" width="300" height="auto"></p>
 		<p>Description:
 			{{ product.description }}</p>
-		<p id="price">Prix:
+		<p id="price">Price:
 			{{ product.prix }}
 			Dhs</p>
 		<button>
@@ -25,7 +25,7 @@
 		</button>
 
 		<button>
-			<a href="{{ path('home') }}">Revenir à la page d'accueil</a>
+			<a href="{{ path('home') }}">Back to Home Page</a>
 		</button>
 	</div>
 {% endblock %}

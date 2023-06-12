@@ -46,14 +46,14 @@
         {% endblock %}
     </head>
     <body>
-        <h1>Page d'accueil</h1>
+        <h1>Home Page </h1>
         <div class="products">
             {% for product in products %}
                 <div class="product">
                     <h2 class="product-title">{{ product.Nom }}</h2>
                     <img class="product-image" src="{{ asset('images/' ~ product.image) }}" alt="Image">
-                    <p class="product-price">Prix : {{ product.Prix }} Dhs</p>
-                    <a href="{{ path('prod_details', {id: product.id}) }}">plus de détails</a>
+                    <p class="product-price">Price : {{ product.Prix }} Dhs</p>
+                    <a href="{{ path('prod_details', {id: product.id}) }}">more details</a>
                 </div>
             {% endfor %}
         </div>
